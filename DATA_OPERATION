@@ -4,6 +4,7 @@
 CREATE SET table DB_FTG_SRS_DATALAB.MDC_OPERATION as(
 select 'A' as top_typ_vision,
 PDA.VALEUR_DATE as ACCOUNTING_DATE,
+/*champs*/
 t.instid,
 cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
 a.DOSSCTA_NO AS ID_DOSS,
