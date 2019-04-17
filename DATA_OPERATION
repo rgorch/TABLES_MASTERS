@@ -1,5 +1,5 @@
 
-Drop table DB_FTG_SRS_DATALAB.MDC_OPERATION;
+/*Drop table DB_FTG_SRS_DATALAB.MDC_OPERATION*/;
 
 CREATE SET table DB_FTG_SRS_DATALAB.MDC_OPERATION as(
 select 'A' as top_typ_vision,
