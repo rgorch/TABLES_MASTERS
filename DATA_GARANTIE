@@ -1,0 +1,619 @@
+
+/*Drop table DB_FTG_SRS_DATALAB.MDC_GARANTIE;*/
+
+CREATE SET table DB_FTG_SRS_DATALAB.MDC_GARANTIE as(
+select 'A' as top_typ_vision,
+PDA.VALEUR_DATE as ACCOUNTING_DATE,
+t.instid,
+cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
+a.DOSSCTA_NO AS ID_DOSS,
+a.PRCT_NO AS CD_PRD_CPTA,
+a.gar_no as ID_GAR,
+c.lieu_stkph_cd,
+c.id_sect_base_resp,
+a.ID_RELAFF_GAR as ID_CTRP_GAR,
+a.CD_ORIGINE_CLI as CODE_REFLET,
+GAR_RISQP_PC,
+PAYS_GAR_CD,
+ASSE_VL_DT,
+GAR_DMEP,
+MT_GAR_CONT,
+GAR_DECH,
+GAR_CY_REG,
+DT_VAL_ECO,
+VALU_APPRO,
+GAR_RISQC_PC,
+GUAR_VL_DT,
+CODE_NNG,
+TYP_PROT_V,
+RANG_GA,
+NAT_GA,
+GAR_SUB_CY,
+c.ind_calc_retailcor_do as ind_calc_retailcor_ga
+from DB_FTG_SRS_DATALAB.prod_v_ec_garantie_a_sysa a 
+inner join DB_FTG_SRS_DATALAB.prod_v_ecs_a_sysa b 
+on a.dosscta_no = b.dosscta_no
+and a.prct_no = b.prct_no
+and a.entite_cd = b.entite_cd
+and b.type_enr = 'GA'
+and a.gar_no = b.ope_gar_no
+inner join (sel cast( 'sysa' as char (5)) as instid, bran_loc_cd, prct_no, lieu_stkph_cd, id_sect_base_resp, nivauxi1, nivauxi2, sum (SLD_DEC_REP_MT) as Accounting_amount
+from DB_FTG_SRS_DATALAB.prod_v_mapbcg_sysa
+where SLD_DEC_REP_MT <> '0' and lieu_stkph_cd <> 'SRS'
+group by 1,2,3,4,5,6,7) as t
+on a.dosscta_no = t.nivauxi1
+and a.prct_no = t.prct_no
+and a.entite_cd = t.bran_loc_cd
+and a.gar_no = t.nivauxi2
+inner join DB_FTG_SRS_DATALAB.mdc_dossier c
+on c.id_doss = t.nivauxi1
+and c.cd_prd_cpta = t.prct_no
+and c.cd_entite_cpta = t.bran_loc_cd
+and c.top_typ_vision = 'A'
+CROSS JOIN DB_FTG_SRS_DATALAB.PROD_V_PILOTE_DATES_sysa PDA
+where  PDA.CD_TYP_DATE = 'DATE_ARRETE'
+UNION ALL
+select 'J' as top_typ_vision,
+PDA.VALEUR_DATE as ACCOUNTING_DATE,
+t.instid,
+cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
+a.DOSSCTA_NO AS ID_DOSS,
+a.PRCT_NO AS CD_PRD_CPTA,
+a.gar_no as ID_GAR,
+c.lieu_stkph_cd,
+c.id_sect_base_resp,
+a.ID_RELAFF_GAR as ID_CTRP_GAR,
+a.CD_ORIGINE_CLI as CODE_REFLET,
+GAR_RISQP_PC,
+PAYS_GAR_CD,
+ASSE_VL_DT,
+GAR_DMEP,
+MT_GAR_CONT,
+GAR_DECH,
+GAR_CY_REG,
+DT_VAL_ECO,
+VALU_APPRO,
+GAR_RISQC_PC,
+GUAR_VL_DT,
+CODE_NNG,
+TYP_PROT_V,
+RANG_GA,
+NAT_GA,
+GAR_SUB_CY,
+c.ind_calc_retailcor_do as ind_calc_retailcor_ga
+from DB_FTG_SRS_DATALAB.prod_v_ec_garantie_c_sysa a 
+inner join prod_v_ecs_c_sysa b 
+on a.dosscta_no = b.dosscta_no
+and a.prct_no = b.prct_no
+and a.entite_cd = b.entite_cd
+and b.type_enr = 'GA'
+and a.gar_no = b.ope_gar_no
+inner join (sel instid, entite_cd, prct_no, dosscta_no, ope_no, sum (sld_aux_fmcc_mt_ctv_eur) as Accounting_amount
+from DB_FTG_SRS_DATALAB.prod_v_mapmut
+where sld_aux_fmcc_mt_ctv_eur <> '0' and lieu_stkph_cd <> 'SRS' and instid ='sysa'
+group by 1,2,3,4,5) as t
+on a.dosscta_no = t.dosscta_no
+and a.prct_no = t.prct_no
+and a.entite_cd = t.entite_cd
+and a.gar_no = t.ope_no
+inner join DB_FTG_SRS_DATALAB.mdc_dossier c
+on c.id_doss = t.dosscta_no
+and c.cd_prd_cpta = t.prct_no
+and c.cd_entite_cpta = t.entite_cd
+and c.top_typ_vision = 'J'
+CROSS JOIN DB_FTG_SRS_DATALAB.PROD_V_PILOTE_DATES_sysa PDA
+where  PDA.CD_TYP_DATE = 'DATE_J_COMPTABLE')
+with data 
+primary index (CD_ENTITE_CPTA, ID_DOSS, ID_GAR, CD_PRD_CPTA, ID_CTRP_GAR, CODE_REFLET);
+INSERT INTO DB_FTG_SRS_DATALAB.MDC_GARANTIE
+select 'A' as top_typ_vision,
+PDA.VALEUR_DATE as ACCOUNTING_DATE,
+t.instid,
+cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
+a.DOSSCTA_NO AS ID_DOSS,
+a.PRCT_NO AS CD_PRD_CPTA,
+a.gar_no as ID_GAR,
+c.lieu_stkph_cd,
+c.id_sect_base_resp,
+a.ID_RELAFF_GAR as ID_CTRP_GAR,
+a.CD_ORIGINE_CLI as CODE_REFLET,
+GAR_RISQP_PC,
+PAYS_GAR_CD,
+ASSE_VL_DT,
+GAR_DMEP,
+MT_GAR_CONT,
+GAR_DECH,
+GAR_CY_REG,
+DT_VAL_ECO,
+VALU_APPRO,
+GAR_RISQC_PC,
+GUAR_VL_DT,
+CODE_NNG,
+TYP_PROT_V,
+RANG_GA,
+NAT_GA,
+GAR_SUB_CY,
+c.ind_calc_retailcor_do as ind_calc_retailcor_ga
+from DB_FTG_SRS_DATALAB.prod_v_ec_garantie_a_sysuu a 
+inner join DB_FTG_SRS_DATALAB.prod_v_ecs_a_sysuu b 
+on a.dosscta_no = b.dosscta_no
+and a.prct_no = b.prct_no
+and a.entite_cd = b.entite_cd
+and b.type_enr = 'GA'
+and a.gar_no = b.ope_gar_no
+inner join (sel cast( 'sysuu' as char (5)) as instid, bran_loc_cd, prct_no, lieu_stkph_cd, id_sect_base_resp, nivauxi1, nivauxi2, sum (SLD_DEC_REP_MT) as Accounting_amount
+from DB_FTG_SRS_DATALAB.prod_v_mapbcg_sysuu
+where SLD_DEC_REP_MT <> '0' and lieu_stkph_cd <> 'SRS'
+group by 1,2,3,4,5,6,7) as t
+on a.dosscta_no = t.nivauxi1
+and a.prct_no = t.prct_no
+and a.entite_cd = t.bran_loc_cd
+and a.gar_no = t.nivauxi2
+inner join DB_FTG_SRS_DATALAB.mdc_dossier c
+on c.id_doss = t.nivauxi1
+and c.cd_prd_cpta = t.prct_no
+and c.cd_entite_cpta = t.bran_loc_cd
+and c.top_typ_vision = 'A'
+CROSS JOIN DB_FTG_SRS_DATALAB.PROD_V_PILOTE_DATES_sysuu PDA
+where  PDA.CD_TYP_DATE = 'DATE_ARRETE'
+UNION ALL
+select 'J' as top_typ_vision,
+PDA.VALEUR_DATE as ACCOUNTING_DATE,
+t.instid,
+cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
+a.DOSSCTA_NO AS ID_DOSS,
+a.PRCT_NO AS CD_PRD_CPTA,
+a.gar_no as ID_GAR,
+c.lieu_stkph_cd,
+c.id_sect_base_resp,
+a.ID_RELAFF_GAR as ID_CTRP_GAR,
+a.CD_ORIGINE_CLI as CODE_REFLET,
+GAR_RISQP_PC,
+PAYS_GAR_CD,
+ASSE_VL_DT,
+GAR_DMEP,
+MT_GAR_CONT,
+GAR_DECH,
+GAR_CY_REG,
+DT_VAL_ECO,
+VALU_APPRO,
+GAR_RISQC_PC,
+GUAR_VL_DT,
+CODE_NNG,
+TYP_PROT_V,
+RANG_GA,
+NAT_GA,
+GAR_SUB_CY,
+c.ind_calc_retailcor_do as ind_calc_retailcor_ga
+from DB_FTG_SRS_DATALAB.prod_v_ec_garantie_c_sysuu a 
+inner join prod_v_ecs_c_sysuu b 
+on a.dosscta_no = b.dosscta_no
+and a.prct_no = b.prct_no
+and a.entite_cd = b.entite_cd
+and b.type_enr = 'GA'
+and a.gar_no = b.ope_gar_no
+inner join (sel instid, entite_cd, prct_no, dosscta_no, ope_no, sum (sld_aux_fmcc_mt_ctv_eur) as Accounting_amount
+from DB_FTG_SRS_DATALAB.prod_v_mapmut
+where sld_aux_fmcc_mt_ctv_eur <> '0' and lieu_stkph_cd <> 'SRS' and instid ='sysuu'
+group by 1,2,3,4,5) as t
+on a.dosscta_no = t.dosscta_no
+and a.prct_no = t.prct_no
+and a.entite_cd = t.entite_cd
+and a.gar_no = t.ope_no
+inner join DB_FTG_SRS_DATALAB.mdc_dossier c
+on c.id_doss = t.dosscta_no
+and c.cd_prd_cpta = t.prct_no
+and c.cd_entite_cpta = t.entite_cd
+and c.top_typ_vision = 'J'
+CROSS JOIN DB_FTG_SRS_DATALAB.PROD_V_PILOTE_DATES_sysuu PDA
+where  PDA.CD_TYP_DATE = 'DATE_J_COMPTABLE';
+INSERT INTO DB_FTG_SRS_DATALAB.MDC_GARANTIE
+select 'A' as top_typ_vision,
+PDA.VALEUR_DATE as ACCOUNTING_DATE,
+t.instid,
+cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
+a.DOSSCTA_NO AS ID_DOSS,
+a.PRCT_NO AS CD_PRD_CPTA,
+a.gar_no as ID_GAR,
+c.lieu_stkph_cd,
+c.id_sect_base_resp,
+a.ID_RELAFF_GAR as ID_CTRP_GAR,
+a.CD_ORIGINE_CLI as CODE_REFLET,
+GAR_RISQP_PC,
+PAYS_GAR_CD,
+ASSE_VL_DT,
+GAR_DMEP,
+MT_GAR_CONT,
+GAR_DECH,
+GAR_CY_REG,
+DT_VAL_ECO,
+VALU_APPRO,
+GAR_RISQC_PC,
+GUAR_VL_DT,
+CODE_NNG,
+TYP_PROT_V,
+RANG_GA,
+NAT_GA,
+GAR_SUB_CY,
+c.ind_calc_retailcor_do as ind_calc_retailcor_ga
+from DB_FTG_SRS_DATALAB.prod_v_ec_garantie_a_sysub a 
+inner join DB_FTG_SRS_DATALAB.prod_v_ecs_a_sysub b 
+on a.dosscta_no = b.dosscta_no
+and a.prct_no = b.prct_no
+and a.entite_cd = b.entite_cd
+and b.type_enr = 'GA'
+and a.gar_no = b.ope_gar_no
+inner join (sel cast( 'sysub' as char (5)) as instid, bran_loc_cd, prct_no, lieu_stkph_cd, id_sect_base_resp, nivauxi1, nivauxi2, sum (SLD_DEC_REP_MT) as Accounting_amount
+from DB_FTG_SRS_DATALAB.prod_v_mapbcg_sysub
+where SLD_DEC_REP_MT <> '0' and lieu_stkph_cd <> 'SRS'
+group by 1,2,3,4,5,6,7) as t
+on a.dosscta_no = t.nivauxi1
+and a.prct_no = t.prct_no
+and a.entite_cd = t.bran_loc_cd
+and a.gar_no = t.nivauxi2
+inner join DB_FTG_SRS_DATALAB.mdc_dossier c
+on c.id_doss = t.nivauxi1
+and c.cd_prd_cpta = t.prct_no
+and c.cd_entite_cpta = t.bran_loc_cd
+and c.top_typ_vision = 'A'
+CROSS JOIN DB_FTG_SRS_DATALAB.PROD_V_PILOTE_DATES_sysub PDA
+where  PDA.CD_TYP_DATE = 'DATE_ARRETE'
+UNION ALL
+select 'J' as top_typ_vision,
+PDA.VALEUR_DATE as ACCOUNTING_DATE,
+t.instid,
+cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
+a.DOSSCTA_NO AS ID_DOSS,
+a.PRCT_NO AS CD_PRD_CPTA,
+a.gar_no as ID_GAR,
+c.lieu_stkph_cd,
+c.id_sect_base_resp,
+a.ID_RELAFF_GAR as ID_CTRP_GAR,
+a.CD_ORIGINE_CLI as CODE_REFLET,
+GAR_RISQP_PC,
+PAYS_GAR_CD,
+ASSE_VL_DT,
+GAR_DMEP,
+MT_GAR_CONT,
+GAR_DECH,
+GAR_CY_REG,
+DT_VAL_ECO,
+VALU_APPRO,
+GAR_RISQC_PC,
+GUAR_VL_DT,
+CODE_NNG,
+TYP_PROT_V,
+RANG_GA,
+NAT_GA,
+GAR_SUB_CY,
+c.ind_calc_retailcor_do as ind_calc_retailcor_ga
+from DB_FTG_SRS_DATALAB.prod_v_ec_garantie_c_sysub a 
+inner join prod_v_ecs_c_sysub b 
+on a.dosscta_no = b.dosscta_no
+and a.prct_no = b.prct_no
+and a.entite_cd = b.entite_cd
+and b.type_enr = 'GA'
+and a.gar_no = b.ope_gar_no
+inner join (sel instid, entite_cd, prct_no, dosscta_no, ope_no, sum (sld_aux_fmcc_mt_ctv_eur) as Accounting_amount
+from DB_FTG_SRS_DATALAB.prod_v_mapmut
+where sld_aux_fmcc_mt_ctv_eur <> '0' and lieu_stkph_cd <> 'SRS' and instid ='sysub'
+group by 1,2,3,4,5) as t
+on a.dosscta_no = t.dosscta_no
+and a.prct_no = t.prct_no
+and a.entite_cd = t.entite_cd
+and a.gar_no = t.ope_no
+inner join DB_FTG_SRS_DATALAB.mdc_dossier c
+on c.id_doss = t.dosscta_no
+and c.cd_prd_cpta = t.prct_no
+and c.cd_entite_cpta = t.entite_cd
+and c.top_typ_vision = 'J'
+CROSS JOIN DB_FTG_SRS_DATALAB.PROD_V_PILOTE_DATES_sysub PDA
+where  PDA.CD_TYP_DATE = 'DATE_J_COMPTABLE';
+INSERT INTO DB_FTG_SRS_DATALAB.MDC_GARANTIE
+select 'A' as top_typ_vision,
+PDA.VALEUR_DATE as ACCOUNTING_DATE,
+t.instid,
+cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
+a.DOSSCTA_NO AS ID_DOSS,
+a.PRCT_NO AS CD_PRD_CPTA,
+a.gar_no as ID_GAR,
+c.lieu_stkph_cd,
+c.id_sect_base_resp,
+a.ID_RELAFF_GAR as ID_CTRP_GAR,
+a.CD_ORIGINE_CLI as CODE_REFLET,
+GAR_RISQP_PC,
+PAYS_GAR_CD,
+ASSE_VL_DT,
+GAR_DMEP,
+MT_GAR_CONT,
+GAR_DECH,
+GAR_CY_REG,
+DT_VAL_ECO,
+VALU_APPRO,
+GAR_RISQC_PC,
+GUAR_VL_DT,
+CODE_NNG,
+TYP_PROT_V,
+RANG_GA,
+NAT_GA,
+GAR_SUB_CY,
+c.ind_calc_retailcor_do as ind_calc_retailcor_ga
+from DB_FTG_SRS_DATALAB.prod_v_ec_garantie_a_sysuh a 
+inner join DB_FTG_SRS_DATALAB.prod_v_ecs_a_sysuh b 
+on a.dosscta_no = b.dosscta_no
+and a.prct_no = b.prct_no
+and a.entite_cd = b.entite_cd
+and b.type_enr = 'GA'
+and a.gar_no = b.ope_gar_no
+inner join (sel cast( 'sysuh' as char (5)) as instid, bran_loc_cd, prct_no, lieu_stkph_cd, id_sect_base_resp, nivauxi1, nivauxi2, sum (SLD_DEC_REP_MT) as Accounting_amount
+from DB_FTG_SRS_DATALAB.prod_v_mapbcg_sysuh
+where SLD_DEC_REP_MT <> '0' and lieu_stkph_cd <> 'SRS'
+group by 1,2,3,4,5,6,7) as t
+on a.dosscta_no = t.nivauxi1
+and a.prct_no = t.prct_no
+and a.entite_cd = t.bran_loc_cd
+and a.gar_no = t.nivauxi2
+inner join DB_FTG_SRS_DATALAB.mdc_dossier c
+on c.id_doss = t.nivauxi1
+and c.cd_prd_cpta = t.prct_no
+and c.cd_entite_cpta = t.bran_loc_cd
+and c.top_typ_vision = 'A'
+CROSS JOIN DB_FTG_SRS_DATALAB.PROD_V_PILOTE_DATES_sysuh PDA
+where  PDA.CD_TYP_DATE = 'DATE_ARRETE'
+UNION ALL
+select 'J' as top_typ_vision,
+PDA.VALEUR_DATE as ACCOUNTING_DATE,
+t.instid,
+cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
+a.DOSSCTA_NO AS ID_DOSS,
+a.PRCT_NO AS CD_PRD_CPTA,
+a.gar_no as ID_GAR,
+c.lieu_stkph_cd,
+c.id_sect_base_resp,
+a.ID_RELAFF_GAR as ID_CTRP_GAR,
+a.CD_ORIGINE_CLI as CODE_REFLET,
+GAR_RISQP_PC,
+PAYS_GAR_CD,
+ASSE_VL_DT,
+GAR_DMEP,
+MT_GAR_CONT,
+GAR_DECH,
+GAR_CY_REG,
+DT_VAL_ECO,
+VALU_APPRO,
+GAR_RISQC_PC,
+GUAR_VL_DT,
+CODE_NNG,
+TYP_PROT_V,
+RANG_GA,
+NAT_GA,
+GAR_SUB_CY,
+c.ind_calc_retailcor_do as ind_calc_retailcor_ga
+from DB_FTG_SRS_DATALAB.prod_v_ec_garantie_c_sysuh a 
+inner join prod_v_ecs_c_sysuh b 
+on a.dosscta_no = b.dosscta_no
+and a.prct_no = b.prct_no
+and a.entite_cd = b.entite_cd
+and b.type_enr = 'GA'
+and a.gar_no = b.ope_gar_no
+inner join (sel instid, entite_cd, prct_no, dosscta_no, ope_no, sum (sld_aux_fmcc_mt_ctv_eur) as Accounting_amount
+from DB_FTG_SRS_DATALAB.prod_v_mapmut
+where sld_aux_fmcc_mt_ctv_eur <> '0' and lieu_stkph_cd <> 'SRS' and instid ='sysuh'
+group by 1,2,3,4,5) as t
+on a.dosscta_no = t.dosscta_no
+and a.prct_no = t.prct_no
+and a.entite_cd = t.entite_cd
+and a.gar_no = t.ope_no
+inner join DB_FTG_SRS_DATALAB.mdc_dossier c
+on c.id_doss = t.dosscta_no
+and c.cd_prd_cpta = t.prct_no
+and c.cd_entite_cpta = t.entite_cd
+and c.top_typ_vision = 'J'
+CROSS JOIN DB_FTG_SRS_DATALAB.PROD_V_PILOTE_DATES_sysuh PDA
+where  PDA.CD_TYP_DATE = 'DATE_J_COMPTABLE';
+INSERT INTO DB_FTG_SRS_DATALAB.MDC_GARANTIE
+select 'A' as top_typ_vision,
+PDA.VALEUR_DATE as ACCOUNTING_DATE,
+t.instid,
+cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
+a.DOSSCTA_NO AS ID_DOSS,
+a.PRCT_NO AS CD_PRD_CPTA,
+a.gar_no as ID_GAR,
+c.lieu_stkph_cd,
+c.id_sect_base_resp,
+a.ID_RELAFF_GAR as ID_CTRP_GAR,
+a.CD_ORIGINE_CLI as CODE_REFLET,
+GAR_RISQP_PC,
+PAYS_GAR_CD,
+ASSE_VL_DT,
+GAR_DMEP,
+MT_GAR_CONT,
+GAR_DECH,
+GAR_CY_REG,
+DT_VAL_ECO,
+VALU_APPRO,
+GAR_RISQC_PC,
+GUAR_VL_DT,
+CODE_NNG,
+TYP_PROT_V,
+RANG_GA,
+NAT_GA,
+GAR_SUB_CY,
+c.ind_calc_retailcor_do as ind_calc_retailcor_ga
+from DB_FTG_SRS_DATALAB.prod_v_ec_garantie_a_sysug a 
+inner join DB_FTG_SRS_DATALAB.prod_v_ecs_a_sysug b 
+on a.dosscta_no = b.dosscta_no
+and a.prct_no = b.prct_no
+and a.entite_cd = b.entite_cd
+and b.type_enr = 'GA'
+and a.gar_no = b.ope_gar_no
+inner join (sel cast( 'sysug' as char (5)) as instid, bran_loc_cd, prct_no, lieu_stkph_cd, id_sect_base_resp, nivauxi1, nivauxi2, sum (SLD_DEC_REP_MT) as Accounting_amount
+from DB_FTG_SRS_DATALAB.prod_v_mapbcg_sysug
+where SLD_DEC_REP_MT <> '0' and lieu_stkph_cd <> 'SRS'
+group by 1,2,3,4,5,6,7) as t
+on a.dosscta_no = t.nivauxi1
+and a.prct_no = t.prct_no
+and a.entite_cd = t.bran_loc_cd
+and a.gar_no = t.nivauxi2
+inner join DB_FTG_SRS_DATALAB.mdc_dossier c
+on c.id_doss = t.nivauxi1
+and c.cd_prd_cpta = t.prct_no
+and c.cd_entite_cpta = t.bran_loc_cd
+and c.top_typ_vision = 'A'
+CROSS JOIN DB_FTG_SRS_DATALAB.PROD_V_PILOTE_DATES_sysug PDA
+where  PDA.CD_TYP_DATE = 'DATE_ARRETE'
+UNION ALL
+select 'J' as top_typ_vision,
+PDA.VALEUR_DATE as ACCOUNTING_DATE,
+t.instid,
+cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
+a.DOSSCTA_NO AS ID_DOSS,
+a.PRCT_NO AS CD_PRD_CPTA,
+a.gar_no as ID_GAR,
+c.lieu_stkph_cd,
+c.id_sect_base_resp,
+a.ID_RELAFF_GAR as ID_CTRP_GAR,
+a.CD_ORIGINE_CLI as CODE_REFLET,
+GAR_RISQP_PC,
+PAYS_GAR_CD,
+ASSE_VL_DT,
+GAR_DMEP,
+MT_GAR_CONT,
+GAR_DECH,
+GAR_CY_REG,
+DT_VAL_ECO,
+VALU_APPRO,
+GAR_RISQC_PC,
+GUAR_VL_DT,
+CODE_NNG,
+TYP_PROT_V,
+RANG_GA,
+NAT_GA,
+GAR_SUB_CY,
+c.ind_calc_retailcor_do as ind_calc_retailcor_ga
+from DB_FTG_SRS_DATALAB.prod_v_ec_garantie_c_sysug a 
+inner join prod_v_ecs_c_sysug b 
+on a.dosscta_no = b.dosscta_no
+and a.prct_no = b.prct_no
+and a.entite_cd = b.entite_cd
+and b.type_enr = 'GA'
+and a.gar_no = b.ope_gar_no
+inner join (sel instid, entite_cd, prct_no, dosscta_no, ope_no, sum (sld_aux_fmcc_mt_ctv_eur) as Accounting_amount
+from DB_FTG_SRS_DATALAB.prod_v_mapmut
+where sld_aux_fmcc_mt_ctv_eur <> '0' and lieu_stkph_cd <> 'SRS' and instid ='sysug'
+group by 1,2,3,4,5) as t
+on a.dosscta_no = t.dosscta_no
+and a.prct_no = t.prct_no
+and a.entite_cd = t.entite_cd
+and a.gar_no = t.ope_no
+inner join DB_FTG_SRS_DATALAB.mdc_dossier c
+on c.id_doss = t.dosscta_no
+and c.cd_prd_cpta = t.prct_no
+and c.cd_entite_cpta = t.entite_cd
+and c.top_typ_vision = 'J'
+CROSS JOIN DB_FTG_SRS_DATALAB.PROD_V_PILOTE_DATES_sysug PDA
+where  PDA.CD_TYP_DATE = 'DATE_J_COMPTABLE';
+INSERT INTO DB_FTG_SRS_DATALAB.MDC_GARANTIE
+select 'A' as top_typ_vision,
+PDA.VALEUR_DATE as ACCOUNTING_DATE,
+t.instid,
+cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
+a.DOSSCTA_NO AS ID_DOSS,
+a.PRCT_NO AS CD_PRD_CPTA,
+a.gar_no as ID_GAR,
+c.lieu_stkph_cd,
+c.id_sect_base_resp,
+a.ID_RELAFF_GAR as ID_CTRP_GAR,
+a.CD_ORIGINE_CLI as CODE_REFLET,
+GAR_RISQP_PC,
+PAYS_GAR_CD,
+ASSE_VL_DT,
+GAR_DMEP,
+MT_GAR_CONT,
+GAR_DECH,
+GAR_CY_REG,
+DT_VAL_ECO,
+VALU_APPRO,
+GAR_RISQC_PC,
+GUAR_VL_DT,
+CODE_NNG,
+TYP_PROT_V,
+RANG_GA,
+NAT_GA,
+GAR_SUB_CY,
+c.ind_calc_retailcor_do as ind_calc_retailcor_ga
+from DB_FTG_SRS_DATALAB.prod_v_ec_garantie_a_sysui a 
+inner join DB_FTG_SRS_DATALAB.prod_v_ecs_a_sysui b 
+on a.dosscta_no = b.dosscta_no
+and a.prct_no = b.prct_no
+and cast (a.entite_cd as char (3))= cast (b.entite_cd as char (3))
+and b.type_enr = 'GA'
+and a.gar_no = b.ope_gar_no
+inner join (sel cast( 'sysui' as char (5)) as instid, bran_loc_cd, prct_no, lieu_stkph_cd, id_sect_base_resp, nivauxi1, nivauxi2, sum (SLD_DEC_REP_MT) as Accounting_amount
+from DB_FTG_SRS_DATALAB.prod_v_mapbcg_sysui
+where SLD_DEC_REP_MT <> '0' and lieu_stkph_cd <> 'SRS'
+group by 1,2,3,4,5,6,7) as t
+on a.dosscta_no = t.nivauxi1
+and a.prct_no = t.prct_no
+and cast (a.entite_cd as varchar (3)) = cast (t.bran_loc_cd as varchar (3))
+and a.gar_no = t.nivauxi2
+inner join DB_FTG_SRS_DATALAB.mdc_dossier c
+on c.id_doss = t.nivauxi1
+and c.cd_prd_cpta = t.prct_no
+and c.cd_entite_cpta = t.bran_loc_cd
+and c.top_typ_vision = 'A'
+CROSS JOIN DB_FTG_SRS_DATALAB.V_PILOTE_DATES_sysui PDA
+where  PDA.CD_TYP_DATE = 'DATE_ARRETE'
+UNION ALL
+select 'J' as top_typ_vision,
+PDA.VALEUR_DATE as ACCOUNTING_DATE,
+t.instid,
+cast (a.ENTITE_CD as varchar (3)) AS CD_ENTITE_CPTA,
+a.DOSSCTA_NO AS ID_DOSS,
+a.PRCT_NO AS CD_PRD_CPTA,
+a.gar_no as ID_GAR,
+c.lieu_stkph_cd,
+c.id_sect_base_resp,
+a.ID_RELAFF_GAR as ID_CTRP_GAR,
+a.CD_ORIGINE_CLI as CODE_REFLET,
+GAR_RISQP_PC,
+PAYS_GAR_CD,
+ASSE_VL_DT,
+GAR_DMEP,
+MT_GAR_CONT,
+GAR_DECH,
+GAR_CY_REG,
+DT_VAL_ECO,
+VALU_APPRO,
+GAR_RISQC_PC,
+GUAR_VL_DT,
+CODE_NNG,
+TYP_PROT_V,
+RANG_GA,
+NAT_GA,
+GAR_SUB_CY,
+c.ind_calc_retailcor_do as ind_calc_retailcor_ga
+from DB_FTG_SRS_DATALAB.prod_v_ec_garantie_c_sysui a 
+inner join prod_v_ecs_c_sysui b 
+on a.dosscta_no = b.dosscta_no
+and a.prct_no = b.prct_no
+and cast (a.entite_cd as char (3))= cast (b.entite_cd as char (3))
+and b.type_enr = 'GA'
+and a.gar_no = b.ope_gar_no
+inner join (sel instid, entite_cd, prct_no, dosscta_no, ope_no, sum (sld_aux_fmcc_mt_ctv_eur) as Accounting_amount
+from DB_FTG_SRS_DATALAB.prod_v_mapmut
+where sld_aux_fmcc_mt_ctv_eur <> '0' and lieu_stkph_cd <> 'SRS' and instid ='sysui'
+group by 1,2,3,4,5) as t
+on a.dosscta_no = t.dosscta_no
+and a.prct_no = t.prct_no
+and cast (a.entite_cd as char (3))= cast (t.entite_cd as char (3))
+and a.gar_no = t.ope_no
+inner join DB_FTG_SRS_DATALAB.mdc_dossier c
+on c.id_doss = t.dosscta_no
+and c.cd_prd_cpta = t.prct_no
+and c.cd_entite_cpta = t.entite_cd
+and c.top_typ_vision = 'J'
+and cast (a.entite_cd as char (3))= cast (c.cd_entite_cpta as char (3))
+CROSS JOIN DB_FTG_SRS_DATALAB.V_PILOTE_DATES_sysui PDA
+where  PDA.CD_TYP_DATE = 'DATE_J_COMPTABLE';
+COLLECT STATISTICS COLUMN (CD_ENTITE_CPTA, ID_DOSS, ID_GAR, CD_PRD_CPTA, ID_CTRP_GAR, CODE_REFLET) ON db_ftg_srs_datalab.mdc_garantie;
